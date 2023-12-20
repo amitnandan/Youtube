@@ -1,8 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { toggleMenu } from "../utils/appSlice";
 import { useDispatch } from "react-redux";
+import { YOUTUBE_SEARCH_API } from "../utils/constants";
 
 const Head = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  useEffect(() => {
+    //api call after every key press
+    //but if difference between 2 call is <200ms decline
+    const timer = setTimeout(() => getSearchSuggestions(), 200);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [searchQuery]);
+
+  const getSearchSuggestions = async () => {
+    const data = await fetch(YOUTUBE_SEARCH_API + searchQuery);
+    const json = await data.json();
+  };
+
   const dispatch = useDispatch();
 
   const toggleMenuHandler = () => {
@@ -25,15 +42,29 @@ const Head = () => {
           src="https://www.shutterstock.com/image-vector/youtube-logo-social-media-icon-260nw-2310134969.jpg"
         />
       </div>
-      <div className=" text-center col-span-10 px-10 scale-125">
-        <input
-          className=" w-1/3 border border-gray-400 p-2 rounded-l-full "
-          type="text"
-        />
-        <button className="border border-gray-400 px-5 py-2 rounded-r-full bg-gray-100">
-          🔍
-        </button>
+
+      <div className="  col-span-10 px-10 scale-125">
+        <div>
+          <input
+            className=" w-1/3 border border-gray-400 p-2 rounded-l-full "
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button className="border border-gray-400 px-5 py-2 rounded-r-full bg-gray-100">
+            🔍
+          </button>
+        </div>
+        <div className="fixed bg-white py-2 px-5">
+          <ul>
+            <li>Iphone</li>
+            <li>Iphone</li>
+            <li>Iphone</li>
+            <li>Iphone</li>
+          </ul>
+        </div>
       </div>
+
       <div className="col-span-1">
         <img
           className="h-8 scale-150"
